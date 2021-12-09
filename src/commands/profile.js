@@ -50,21 +50,72 @@ module.exports = {
 
       return context.font
     }
-    const applyInt = (canvas, text) => {
+    const fill屬性 = (canvas, text, height) => {
       const context = canvas.getContext('2d')
-      let fontSize = 18
-
-      do {
-        context.font = `${(fontSize -= 1)}px Gen Jyuu GothicX Medium`
-      } while (context.measureText(text).width > canvas.width - 400)
-
-      return context.font
+      context.fillStyle = '#302008'
+      let width
+      let fontSize
+      switch (text.length) {
+        case 1:
+          fontSize = 17
+          width = 206
+          break
+        case 2:
+          fontSize = 15
+          width = 201
+          break
+        case 3:
+          fontSize = 13
+          width = 198
+          break
+        case 4:
+          fontSize = 13
+          width = 195
+          break
+        default:
+          fontSize = 5
+          width = 195
+          break
+      }
+      context.font = `${fontSize}px Gen Jyuu GothicX Medium`
+      context.fillText(`${text}`, width, height)
+    }
+    const fill等級 = (canvas, text) => {
+      const context = canvas.getContext('2d')
+      context.fillStyle = '#302008'
+      let width
+      let height = 246
+      let fontSize
+      switch (text.length) {
+        case 1:
+          fontSize = 35
+          width = 494
+          break
+        case 2:
+          fontSize = 30
+          width = 486
+          break
+        case 3:
+          fontSize = 28
+          width = 479
+          break
+        case 4:
+          fontSize = 30
+          width = 479
+          break
+        default:
+          fontSize = 25
+          width = 479
+          break
+      }
+      context.font = `${fontSize}px Gen Jyuu GothicX Medium`
+      context.fillText(`${text}`, width, height)
     }
 
     const canvas = Canvas.createCanvas(699, 497)
     const context = canvas.getContext('2d')
     const background = await Canvas.loadImage(
-      'https://cdn.discordapp.com/attachments/851788198467338242/916618115662610442/44ff63d4df086bea4180dee6bbe39b31.png'
+      'https://cdn.discordapp.com/attachments/918447949011357716/918471175762493490/44ff63d4df086bea4180dee6bbe39b31.png'
     )
 
     context.drawImage(background, 0, 0, canvas.width, canvas.height)
@@ -79,25 +130,16 @@ module.exports = {
       59.1,
       118.3
     )
-    console.log(User.屬性['ATK'])
-    context.font = applyInt(canvas, `${User.屬性['ATK']}`)
-    context.fillStyle = '#302008'
-    context.fillText(`${User.屬性['ATK']}`, 204, 284)
-    context.font = applyInt(canvas, `${User.屬性['DEF']}`)
-    context.fillStyle = '#302008'
-    context.fillText(`${User.屬性['DEF']}`, 204, 310)
-    context.font = applyInt(canvas, `${User.屬性['HP']}`)
-    context.fillStyle = '#302008'
-    context.fillText(`${User.屬性['HP']}`, 204, 339)
-    context.font = applyInt(canvas, `${User.屬性['INT']}`)
-    context.fillStyle = '#302008'
-    context.fillText(`${User.屬性['INT']}`, 204, 368)
-    context.font = applyInt(canvas, `${User.屬性['MP']}`)
-    context.fillStyle = '#302008'
-    context.fillText(`${User.屬性['MP']}`, 204, 397)
-    context.font = applyInt(canvas, `${User.屬性['DEX']}`)
-    context.fillStyle = '#302008'
-    context.fillText(`${User.屬性['DEX']}`, 204, 426)
+
+    fill屬性(canvas, `${User.屬性['ATK']}`, 284)
+    fill屬性(canvas, `${User.屬性['DEF']}`, 313)
+    fill屬性(canvas, `${User.屬性['HP']}`, 339)
+    fill屬性(canvas, `${User.屬性['INT']}`, 365)
+    fill屬性(canvas, `${User.屬性['MP']}`, 393)
+    fill屬性(canvas, `${User.屬性['DEX']}`, 420)
+
+    fill等級(canvas, User.等級.toString())
+
     context.beginPath()
     context.arc(591.0, 141.0, 70, 0, Math.PI * 2, true)
     context.closePath()

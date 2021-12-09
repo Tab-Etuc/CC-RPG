@@ -6,6 +6,7 @@ const guldSchema = mongoose.Schema({
   種族: { type: String, required: false },
   裝備: { type: Array, required: false, default: [] },
   等級: { type: Number, required: false, default: 1 },
+  評級: {type: String, required: false},
   經驗值: { type: Number, required: false, default: 1 },
   升等所需經驗值: { type: Number, required: false, default: 100 },
   技能: { type: Array, required: false },
