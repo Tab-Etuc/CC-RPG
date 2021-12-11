@@ -23,27 +23,33 @@ module.exports = {
     if (!user)
       return bot.say.msgError(
         message.channel,
-        '```md\n- 你尚未降臨此世界```\n **請先輸入`Cstart`！**'
+        `\`\`\`md\n- 你尚未降臨此世界\`\`\`\n **請先輸入\`${GuildDB.prefix}start\`！**`
       )
+    if (user.陣營) {
+      if (user.陣營 == '冒險者公會')
+        return message.channel.send({
+          embeds: [
+            bot.say.msgInfo(
+              `\`\`\`md\n# 您已加入冒險者公會！\n\n\`\`\`\n您可以接取公會張貼的「討罰」、「護衛」、「探索」……任務。\n隨著貢獻度的增加而開放更高難度的任務，您亦能委託製造「裝備」、「武器」等。\n請輸入\`${GuildDB.prefix}quest\` 以接取任務。\n輸入\`${GuildDB.prefix}profile\`以查看冒險者卡片。`
+            )
+          ]
+        })
+    }
     const msg = message.channel.send({
       ephemeral: false,
       embeds: [
-        new MessageEmbed()
-          .setTitle('<:gura:916521356370251796> 《神意》資訊面板')
-          .setDescription('```md\n# 請選擇您欲加入的陣營```')
-          .setColor('#58FFB9')
-          .setFields([
-            {
-              name: '自由的象徵——冒險者公會',
-              value:
-                '加入冒險者公會後可接受公會張貼之任務以獲取報酬，並於實戰經驗中成長。\n冒險者可於各地設有冒險者分部的國家間自由行動，並且能獲得特別優待。\n當對自己實力有一定自信後，可參加冒險者公會主辦的考核，並能獲取接更高難度的任務權限。'
-            },
-            {
-              name: '絕對的強權——阿斯克特帝國',
-              value:
-                '若您於阿斯克特帝國從軍，將執行皇帝的旨意，並不得有絲毫忤逆之心。\n您可於此獲得與軍職相稱的裝備、武器、必需品。'
-            }
-          ])
+        bot.say.msgInfo('```md\n# 請選擇您欲加入的陣營```').setFields([
+          {
+            name: '自由的象徵——冒險者公會',
+            value:
+              '加入冒險者公會後可接受公會張貼之任務以獲取報酬，並於實戰經驗中成長。\n冒險者可於各地設有冒險者分部的國家間自由行動，並且能獲得特別優待。\n當對自己實力有一定自信後，可參加冒險者公會主辦的考核，並能獲取接更高難度的任務權限。'
+          },
+          {
+            name: '絕對的強權——阿斯克特帝國',
+            value:
+              '若您於阿斯克特帝國從軍，將執行皇帝的旨意，並不得有絲毫忤逆之心。\n您可於此獲得與軍職相稱的裝備、武器、必需品。'
+          }
+        ])
       ],
       components: [
         new MessageActionRow().addComponents(
@@ -70,20 +76,18 @@ module.exports = {
     })
     let a = true
     collector.on('collect', async i => {
-      console.log('a')
       if (i.customId === 'joinGuild') {
         a = false
         ;(await msg).delete()
         await i.channel.send({
           embeds: [
-            new MessageEmbed()
-              .setTitle('<:gura:916521356370251796> 《神意》資訊面板')
-              .setDescription(
-                '```md\n# 您已加入冒險者公會！\n\n```\n您可以接取公會張貼的「討罰」、「護衛」、「探索」……任務。\n隨著貢獻度的增加而開放更高難度的任務，您亦能委託製造「裝備」、「武器」等。\n請輸入`Cqueue` 以接取任務。\n輸入`Cprofile`以查看冒險者卡片。'
-              )
-              .setColor('#58FFB9')
+            bot.say.msgInfo(
+              `\`\`\`md\n# 您已加入冒險者公會！\n\n\`\`\`\n您可以接取公會張貼的「討罰」、「護衛」、「探索」……任務。\n隨著貢獻度的增加而開放更高難度的任務，您亦能委託製造「裝備」、「武器」等。\n請輸入\`${GuildDB.prefix}quest\` 以接取任務。\n輸入\`${GuildDB.prefix}profile\`以查看冒險者卡片。`
+            )
           ]
         })
+        user.陣營 = '冒險者公會'
+        user.save()
       }
       if (i.customId === 'joinEmpire') {
       }
