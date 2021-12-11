@@ -1,6 +1,5 @@
 const { Client, Collection } = require('discord.js')
 const prettyMilliseconds = require('pretty-ms')
-const getLanguage = require('../models/getLanguage')
 
 require('../models/format')
 require('dotenv').config()
@@ -24,7 +23,6 @@ class CCRPG extends Client {
     this.say = require('../models/Embeds')
     this.config = require('../config')
     this.ms = prettyMilliseconds
-    this.getLanguage = getLanguage
     this.build()
   }
 
