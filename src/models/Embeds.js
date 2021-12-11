@@ -2,17 +2,18 @@ const { MessageEmbed } = require('discord.js')
 
 class Embeds {
   /**
-   * Send a custom embed
+   * return a custom embed
    * @param {import("../base/CC-RPG-Client")} bot
    * @param {import("discord.js").Message.channel} Channel
    * @param {string} text
    */
-  msgInfo (bot, Channel, text) {
-    Channel.send({
-      embeds: [
-        new MessageEmbed().setColor(bot.config.EmbedColor).setDescription(text)
-      ]
-    })
+  msgInfo (text) {
+    return new MessageEmbed()
+      .setTitle('<:gura:916521356370251796> 《神意》資訊面板')
+      .setDescription(text)
+      .setColor(16772493)
+      .setTimestamp()
+      .setImage('https://imgur.com/ARAAYlh.gif')
   }
   /**
    * Send a custom embed
@@ -23,7 +24,12 @@ class Embeds {
   msgError (Channel, text) {
     Channel.send({
       embeds: [
-        new MessageEmbed().setTitle('<:gura:916521356370251796> 《神意》資訊面板').setColor('RED').setDescription(text)
+        new MessageEmbed()
+          .setTitle('<:gura:916521356370251796> 《神意》資訊面板')
+          .setColor('RED')
+          .setDescription(text)
+          .setTimestamp()
+          .setImage('https://imgur.com/ARAAYlh.gif')
       ]
     })
   }
