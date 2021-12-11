@@ -1,4 +1,9 @@
-const { MessageAttachment } = require('discord.js')
+const {
+  MessageEmbed,
+  MessageButton,
+  MessageActionRow,
+  MessageAttachment
+} = require('discord.js')
 const Users = require('../models/mongoDB/Users.js')
 const { resolve, join } = require('path')
 
@@ -12,7 +17,7 @@ module.exports = {
     channel: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'EMBED_LINKS'],
     member: []
   },
-  aliases: ['s'],
+  aliases: ['p'],
   /**
    *
    * @param {import("../base/CC-OSV-Client")} bot
@@ -34,12 +39,21 @@ module.exports = {
         { family: 'Canterbury' }
       )
     }
-    const User = await Users.findOne({ _id: message.author.id })
-    if (!User)
-      return bot.say.msgError(
-        message.channel,
-        '```md\n- 你尚未降臨此世界```\n **請先輸入`Cstart`！**'
-      )
+    let user = message.mentions.users.first() || message.author
+    const User = await Users.findOne({ _id: user.id })
+    if (!User) {
+      if (user == message.author) {
+        return bot.say.msgError(
+          message.channel,
+          `\`\`\`md\n- 你尚未降臨此世界\`\`\`\n **請先輸入\`${GuildDB.prefix}start\`！**`
+        )
+      } else {
+        return bot.say.msgError(
+          message.channel,
+          `\`\`\`md\n- 查無對象資料\`\`\``
+        )
+      }
+    }
     const applyText = (canvas, text) => {
       const context = canvas.getContext('2d')
       let fontSize = 70
@@ -100,11 +114,11 @@ module.exports = {
           width = 479
           break
         case 4:
-          fontSize = 30
-          width = 479
+          fontSize = 24
+          width = 475
           break
         default:
-          fontSize = 25
+          fontSize = 22
           width = 479
           break
       }
@@ -158,8 +172,140 @@ module.exports = {
       'profile-image.png'
     )
 
-    message.channel.send({
-      files: [attachment]
+    const msg = message.channel.send({
+      files: [attachment],
+      ephemeral: false,
+      components: [
+        new MessageActionRow().addComponents(
+          new MessageButton()
+            .setCustomId('profileQuest')
+            .setLabel('任務')
+            .setStyle('PRIMARY')
+            .setDisabled(true),
+          new MessageButton()
+            .setCustomId('profileAbility')
+            .setLabel('屬性')
+            .setStyle('PRIMARY')
+            .setDisabled(true),
+          new MessageButton()
+            .setCustomId('profileDigitization')
+            .setLabel('數值化')
+            .setStyle('PRIMARY'),
+          new MessageButton()
+            .setCustomId('profileAppraisal')
+            .setLabel('考核')
+            .setStyle('DANGER')
+            .setDisabled(true)
+        )
+      ]
+    })
+
+    const filter = i =>
+      (i.customId === 'profileDigitization' ||
+        i.customId === 'profileQuest' ||
+        i.customId === 'profileAbility' ||
+        i.customId === 'profileAppraisal') &&
+      i.user.id === message.author.id
+
+    const collector = message.channel.createMessageComponentCollector({
+      filter,
+      time: 60000
+    })
+    let a = true
+    collector.on('collect', async i => {
+      let Equipments = '```md\n'
+      if (User.裝備[0]) {
+        User.裝備.forEach(
+          element => (Equipments = Equipments + '- ' + element + '\n')
+        )
+      } else {
+        Equipments += '無'
+      }
+
+      switch (i.customId) {
+        case 'profileQuest':
+          break
+        case 'profileAbility':
+          break
+        case 'profileDigitization':
+          a = false
+          ;(await msg).delete().catch()
+          await i.channel.send({
+            ephemeral: false,
+            embeds: [
+              bot.say
+                .msgInfo(
+                  `\`\`\`md\n# 稀有技能 -「數學者」權能\n\`\`\`\n\`\`\`md\n# 屬性\n- [ATK] 物理攻擊力> ${User.屬性['ATK']}\n- [DEF] 防禦力> ${User.屬性['DEF']}\n- [HP] 血量> ${User.屬性['HP']}\n- [INT] 智力> ${User.屬性['INT']}\n- [MP] 魔力值> ${User.屬性['MP']}\n- [DEX] 敏捷> ${User.屬性['DEX']}\n\`\`\``
+                )
+                .setThumbnail(user.displayAvatarURL())
+                .setFields([
+                  {
+                    name: '[等級]',
+                    value: User.等級.toString(),
+                    inline: true
+                  },
+                  {
+                    name: '[評級]',
+                    value: User.評級,
+                    inline: true
+                  },
+                  {
+                    name: '[種族]',
+                    value: User.種族,
+                    inline: true
+                  },
+                  {
+                    name: '[經驗值]',
+                    value: User.經驗值.toString(),
+                    inline: true
+                  },
+                  {
+                    name: '[升等所需經驗值]',
+                    value: User.升等所需經驗值.toString(),
+                    inline: true
+                  },
+                  {
+                    name: '[裝備]',
+                    value: Equipments + '```'
+                  }
+                ])
+            ]
+          })
+          break
+        case 'profileAppraisal':
+          break
+      }
+    })
+
+    collector.on('end', async collected => {
+      console.log('time oy')
+      if (a)
+        (await msg).edit({
+          components: [
+            new MessageActionRow().addComponents(
+              new MessageButton()
+                .setCustomId('profileQuest')
+                .setLabel('任務')
+                .setStyle('PRIMARY')
+                .setDisabled(true),
+              new MessageButton()
+                .setCustomId('profileAbility')
+                .setLabel('屬性')
+                .setStyle('PRIMARY')
+                .setDisabled(true),
+              new MessageButton()
+                .setCustomId('profileDigitization')
+                .setLabel('數值化')
+                .setStyle('PRIMARY')
+                .setDisabled(true),
+              new MessageButton()
+                .setCustomId('profileAppraisal')
+                .setLabel('考核')
+                .setStyle('DANGER')
+                .setDisabled(true)
+            )
+          ]
+        })
     })
   }
 }
