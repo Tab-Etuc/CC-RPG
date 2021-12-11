@@ -114,19 +114,14 @@ module.exports = {
               for (let btn of button) row.push(addRow(btn))
             }
           }
-          const embed = new MessageEmbed()
-            .setTitle('<:gura:916521356370251796> 《神意》資訊面板')
-            .setDescription(
-              '```markdown\n# 您現在是第 1 次轉生，您目前是<人族>！\n\n- 您獲得了神的恩賜——\n  1. 稀有技能「數學者」\n  2. 屬性點數  30  點\n```\n```md\n#屬性面板\n- ATK(Attack)：物理攻擊力 10\n- DEF(Defense)：防禦力 1\n- HP(Health Point)：血量 100\n- INT(Intelligence)：智力 100\n- MP(Magic point)：魔力值 100\n- DEX(Dexterity)：敏捷 100\n```\n**請點擊下方按鈕，增加或減少屬性點！**\n您目前有 ** 30 ** 屬性點！'
-            )
-            .setColor(16772493)
-            .setTimestamp()
-            .setImage('https://imgur.com/ARAAYlh.gif')
-
           await i.channel
             .send({
               ephemeral: false,
-              embeds: [embed],
+              embeds: [
+                bot.say.msgInfo(
+                  '```markdown\n# 您現在是第 1 次轉生，您目前是<人族>！\n\n- 您獲得了神的恩賜——\n  1. 稀有技能「數學者」\n  2. 屬性點數  30  點\n```\n```md\n#屬性面板\n- ATK(Attack)：物理攻擊力 10\n- DEF(Defense)：防禦力 1\n- HP(Health Point)：血量 100\n- INT(Intelligence)：智力 100\n- MP(Magic point)：魔力值 100\n- DEX(Dexterity)：敏捷 100\n```\n**請點擊下方按鈕，增加或減少屬性點！**\n您目前有 ** 30 ** 屬性點！'
+                )
+              ],
               components: row
             })
             .then(async Amsg => {
@@ -162,17 +157,13 @@ module.exports = {
                     totalAtt = 30
                   } // 完成
                   else if (result) {
-                    const embed = new MessageEmbed()
-                      .setTitle('<:gura:916521356370251796> 《神意》資訊面板')
-                      .setDescription(
-                        '```md\n# 屬性加點成功！```\n您可以輸入`Cjoin`選擇欲加入的陣營（冒險者公會、帝國）！'
-                      )
-                      .setColor(16772493)
-                      .setTimestamp()
-                      .setImage('https://imgur.com/ARAAYlh.gif')
                     await Amsg.delete()
                     await i.channel.send({
-                      embeds: [embed],
+                      embeds: [
+                        bot.say.msgInfo(
+                          `\`\`\`md\n# 屬性加點成功！\`\`\`\n您可以輸入\`${GuildDB.prefix}join\`選擇欲加入的陣營（冒險者公會、帝國）！`
+                        )
+                      ],
                       components: []
                     })
                     let data = {}
@@ -284,14 +275,9 @@ module.exports = {
               setTimeout(async () => {
                 await Amsg.edit({
                   embeds: [
-                    new MessageEmbed()
-                      .setTitle('<:gura:916521356370251796> 《神意》資訊面板')
-                      .setColor(16772493)
-                      .setTimestamp()
-                      .setImage('https://imgur.com/ARAAYlh.gif')
-                      .setDescription(
-                        `\`\`\`markdown\n- 已逾時！\`\`\`\n**請嘗試再次輸入\`Cstart\``
-                      )
+                    bot.say.msgInfo(
+                      `\`\`\`markdown\n- 已逾時！\`\`\`\n**請嘗試再次輸入\`${GuildDB.prefix}start\``
+                    )
                   ],
                   embedscomponents: []
                 })
@@ -306,7 +292,7 @@ module.exports = {
     } else {
       message.channel.send({
         embeds: [
-          new MessageEmbed().setDescription(
+          bot.say.msgInfo(
             `您早已於<t:${Math.floor(User.創建於 / 1000)}:F>啟程了。`
           )
         ]
