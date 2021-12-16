@@ -9,7 +9,7 @@ module.exports = {
     channel: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'EMBED_LINKS'],
     member: []
   },
-  aliases: ['s'],
+  aliases: ['j'],
   /**
    *
    * @param {import("../base/CC-OSV-Client")} bot
@@ -27,7 +27,7 @@ module.exports = {
       )
     if (user.陣營) {
       if (user.陣營 == '冒險者公會')
-        return message.channel.send({
+        return message.reply({
           embeds: [
             bot.say.msgInfo(
               `\`\`\`md\n# 您已加入冒險者公會！\n\n\`\`\`\n您可以接取公會張貼的「討罰」、「護衛」、「探索」……任務。\n隨著貢獻度的增加而開放更高難度的任務，您亦能委託製造「裝備」、「武器」等。\n請輸入\`${GuildDB.prefix}quest\` 以接取任務。\n輸入\`${GuildDB.prefix}profile\`以查看冒險者卡片。`
@@ -35,7 +35,7 @@ module.exports = {
           ]
         })
     }
-    const msg = message.channel.send({
+    const msg = message.reply({
       ephemeral: false,
       embeds: [
         bot.say.msgInfo('```md\n# 請選擇您欲加入的陣營```').setFields([

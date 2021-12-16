@@ -23,7 +23,7 @@ module.exports = {
       _id: message.author.id
     })
     if (!User) {
-      const msg = message.channel.send({
+      const msg = message.reply({
         content:
           '**《神意》**\n是一款帶有中世紀色彩的劍與魔法世界。\n諸君將藉由發送訊息以操縱世界中的角色，並尋覓得《神意》。\n\n世界中的角色一旦徹底湮滅，您便可「受肉」重生至下一角色。\n每「受肉」一次，靈魂便會得到昇華，同時獲得「稀有技能」。\n「稀有技能」將使角色變得更加強大，並得以更加迅速地尋覓得《神意》。',
         ephemeral: false,
@@ -73,11 +73,11 @@ module.exports = {
         filter,
         time: 15000
       })
-      let a = true
+      let deleted = false
       collector.on('collect', async i => {
         if (i.customId === 'startAgree') {
           ;(await msg).delete()
-          a = false
+          deleted = true
 
           let button = new Array([], [], [], [])
           let row = []
@@ -173,6 +173,8 @@ module.exports = {
                     data['INT'] = INT
                     data['MP'] = MP
                     data['DEX'] = DEX
+                    data['TotalHP'] = 100
+                    data['TotalMP'] = 100
                     new Users({
                       _id: message.author.id,
                       區域: '初始之地——新手鎮',
@@ -273,21 +275,23 @@ module.exports = {
                 createCollector(txt, result)
               }
               setTimeout(async () => {
-                await Amsg.edit({
-                  embeds: [
-                    bot.say.msgInfo(
-                      `\`\`\`markdown\n- 已逾時！\`\`\`\n**請嘗試再次輸入\`${GuildDB.prefix}start\``
-                    )
-                  ],
-                  embedscomponents: []
-                })
+                if (!deleted) {
+                  await Amsg.edit({
+                    embeds: [
+                      bot.say.msgInfo(
+                        `\`\`\`markdown\n- 已逾時！\`\`\`\n**請嘗試再次輸入\`${GuildDB.prefix}start\``
+                      )
+                    ],
+                    embedscomponents: []
+                  })
+                }
               }, time)
             })
         }
       })
 
       collector.on('end', async collected => {
-        if (a) (await msg).delete()
+        if (!deleted) (await msg).delete()
       })
     } else {
       message.channel.send({

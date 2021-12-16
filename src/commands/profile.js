@@ -1,5 +1,4 @@
 const {
-  MessageEmbed,
   MessageButton,
   MessageActionRow,
   MessageAttachment
@@ -9,6 +8,7 @@ const { resolve, join } = require('path')
 
 const Canvas = require('canvas')
 const { registerFont } = require('canvas')
+const Bar = require('../models/Bar')
 module.exports = {
   name: 'profile',
   description: '查看冒險者卡片',
@@ -172,7 +172,7 @@ module.exports = {
       'profile-image.png'
     )
 
-    const msg = message.channel.send({
+    const msg = message.reply({
       files: [attachment],
       ephemeral: false,
       components: [
@@ -180,11 +180,6 @@ module.exports = {
           new MessageButton()
             .setCustomId('profileQuest')
             .setLabel('任務')
-            .setStyle('PRIMARY')
-            .setDisabled(true),
-          new MessageButton()
-            .setCustomId('profileAbility')
-            .setLabel('屬性')
             .setStyle('PRIMARY')
             .setDisabled(true),
           new MessageButton()
@@ -203,7 +198,6 @@ module.exports = {
     const filter = i =>
       (i.customId === 'profileDigitization' ||
         i.customId === 'profileQuest' ||
-        i.customId === 'profileAbility' ||
         i.customId === 'profileAppraisal') &&
       i.user.id === message.author.id
 
@@ -230,12 +224,14 @@ module.exports = {
         case 'profileDigitization':
           a = false
           ;(await msg).delete().catch()
+          const HPBar = Bar(User.屬性['HP'], User.屬性['TotalHP'], 'HP')
+          const MPBar = Bar(User.屬性['MP'], User.屬性['TotalMP'], 'MP')
           await i.channel.send({
             ephemeral: false,
             embeds: [
               bot.say
                 .msgInfo(
-                  `\`\`\`md\n# 稀有技能 -「數學者」權能\n\`\`\`\n\`\`\`md\n# 屬性\n- [ATK] 物理攻擊力> ${User.屬性['ATK']}\n- [DEF] 防禦力> ${User.屬性['DEF']}\n- [HP] 血量> ${User.屬性['HP']}\n- [INT] 智力> ${User.屬性['INT']}\n- [MP] 魔力值> ${User.屬性['MP']}\n- [DEX] 敏捷> ${User.屬性['DEX']}\n\`\`\``
+                  `\`\`\`md\n# 稀有技能 -「數學者」權能\n\`\`\`\n**血量：**\n${HPBar.Bar} \`${HPBar.percentageText}\`\n**魔力值：**\n${MPBar.Bar} \`${MPBar.percentageText}\`\n\`\`\`md\n# 屬性狀態\n- [ATK] 物理攻擊力> ${User.屬性['ATK']}\n- [DEF] 防禦力> ${User.屬性['DEF']}\n- [HP] 血量> ${User.屬性['HP']}/${User.屬性['TotalHP']}\n- [INT] 智力> ${User.屬性['INT']}\n- [MP] 魔力值> ${User.屬性['MP']}/${User.屬性['TotalMP']}\n- [DEX] 敏捷> ${User.屬性['DEX']}\n\`\`\``
                 )
                 .setThumbnail(user.displayAvatarURL())
                 .setFields([
@@ -256,12 +252,20 @@ module.exports = {
                   },
                   {
                     name: '[經驗值]',
-                    value: User.經驗值.toString(),
+                    value:
+                      User.經驗值.toString() +
+                      '/' +
+                      User.升等所需經驗值.toString(),
                     inline: true
                   },
                   {
-                    name: '[升等所需經驗值]',
-                    value: User.升等所需經驗值.toString(),
+                    name: '[金錢]',
+                    value: User.金錢.toString(),
+                    inline: true
+                  },
+                  {
+                    name: '[業力]',
+                    value: User.業力.toString(),
                     inline: true
                   },
                   {
@@ -278,7 +282,6 @@ module.exports = {
     })
 
     collector.on('end', async collected => {
-      console.log('time oy')
       if (a)
         (await msg).edit({
           components: [
@@ -286,11 +289,6 @@ module.exports = {
               new MessageButton()
                 .setCustomId('profileQuest')
                 .setLabel('任務')
-                .setStyle('PRIMARY')
-                .setDisabled(true),
-              new MessageButton()
-                .setCustomId('profileAbility')
-                .setLabel('屬性')
                 .setStyle('PRIMARY')
                 .setDisabled(true),
               new MessageButton()
