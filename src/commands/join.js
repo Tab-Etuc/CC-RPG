@@ -49,6 +49,12 @@ module.exports = {
             value:
               '若您於阿斯克特帝國從軍，將執行皇帝的旨意，並不得有絲毫忤逆之心。\n您可於此獲得與軍職相稱的裝備、武器、必需品。'
           }
+          // ,
+          // {
+          //   name: '不知道要寫甚麼——商人協會',
+          //   value:
+          //     '透過經商致富，您可透過金錢將敵人砸死、雇用下人以幫助您搜刮資源。\n加入商會，您在跨國境的交易中能減免關稅，遇到魔物時聲請傭兵討伐......'
+          // }
         ])
       ],
       components: [
@@ -78,7 +84,7 @@ module.exports = {
     collector.on('collect', async i => {
       if (i.customId === 'joinGuild') {
         a = false
-        ;(await msg).delete()
+        ;(await msg).delete().catch(err=>console.log(err))
         await i.channel.send({
           embeds: [
             bot.say.msgInfo(
