@@ -45,21 +45,9 @@ module.exports = {
           new MessageEmbed()
             .setTitle('事前須知')
             .setDescription(
-              '您第一次「受肉」的種族一定是「人族」，並得到神的恩賜——\n稀有技能·「數學者」。\n「數學者」將使血量、魔力等具現數字化，並將事件執行的成功機率計算後轉換為實質數字呈現於您眼前。\n\n《神意》世界中，人界分為兩大勢力：'
+              '您第一次「受肉」的種族一定是「人族」，並得到神的恩賜——\n稀有技能·「數學者」。\n```md\n# 「數學者」將使血量、魔力等具現數字化，並將事件執行的成功機率計算後轉換為實質數字呈現於您眼前。```\n**《神意》**世界中，您將於觸發特定事件後，獲得技能；\n您無須詠唱、結構術式，即可消耗**MP**施法。\n您在重複使用該技能後，其便利性會隨**熟練度**增加而增加。\n\n您可於完成**「神使任務」**後獲得報酬：\n技能、世界權能、屬性加成……。\n\n**「屬性加成」**為神使特權，您將於初次「受肉」時獲得屬性點、每次升級時獲得屬性加成。「屬性」能使您的攻擊力、防禦力、敏捷……得到提昇。'
             )
-            .setColor('#58FFB9')
-            .setFields([
-              {
-                name: '自由的象徵——冒險者公會',
-                value:
-                  '加入冒險者公會後可接受公會張貼之任務以獲取報酬，並從中學習。\n冒險者可於各地設有冒險者分部的國家間自由行動，並且能獲得特別優待。\n當對自己實力有一定自信後，可參加冒險者公會主辦的考核，並能獲取接更高難度的任務權限。'
-              },
-              {
-                name: '絕對的強權——阿斯克特帝國',
-                value:
-                  '若您於阿斯克特帝國從軍，將執行皇帝的旨意，並不得有絲毫忤逆之心。\n您可於此獲得與軍職相稱的裝備、武器、必需品。'
-              }
-            ]),
+            .setColor('#58FFB9'),
           new MessageEmbed()
             .setTitle('請確認您是否同意進去《神意》世界')
             .setDescription('點擊下方按鈕，以回覆您的選擇。')
@@ -76,38 +64,30 @@ module.exports = {
       let deleted = false
       collector.on('collect', async i => {
         if (i.customId === 'startAgree') {
-          ;(await msg).delete()
+          ;(await msg).delete().catch(err => console.log(err))
           deleted = true
 
-          let button = new Array([], [], [], [])
+          let button = new Array([], [])
           let row = []
           let text = [
             'ATK+',
             'DEF+',
-            'HP+',
-            '神',
             'INT+',
-            'MP+',
             'DEX+',
-            '諭',
+            '重置',
             'ATK-',
             'DEF-',
-            'HP-',
-            '重置',
             'INT-',
-            'MP-',
             'DEX-',
             '完成'
           ]
           let ATK = 10
-          let DEF = 1
-          let HP = 100
+          let DEF = 10
           let INT = 100
-          let MP = 100
           let DEX = 100
           let current = 0
           for (let i = 0; i < text.length; i++) {
-            if (button[current].length === 4) current++
+            if (button[current].length === 5) current++
             button[current].push(createButton(text[i]))
 
             if (i === text.length - 1) {
@@ -119,14 +99,14 @@ module.exports = {
               ephemeral: false,
               embeds: [
                 bot.say.msgInfo(
-                  '```markdown\n# 您現在是第 1 次轉生，您目前是<人族>！\n\n- 您獲得了神的恩賜——\n  1. 稀有技能「數學者」\n  2. 屬性點數  30  點\n```\n```md\n#屬性面板\n- ATK(Attack)：物理攻擊力 10\n- DEF(Defense)：防禦力 1\n- HP(Health Point)：血量 100\n- INT(Intelligence)：智力 100\n- MP(Magic point)：魔力值 100\n- DEX(Dexterity)：敏捷 100\n```\n**請點擊下方按鈕，增加或減少屬性點！**\n您目前有 ** 30 ** 屬性點！'
+                  '```markdown\n# 您現在是第 1 次轉生，您目前是<人族>！\n\n- 您獲得了神的恩賜——\n  1. 稀有技能「數學者」\n  2. 屬性點數  10  點\n```\n```md\n#屬性面板\n- ATK(Attack)：物理攻擊力 10\n- DEF(Defense)：防禦力 10\n- INT(Intelligence)：智力 100\n- DEX(Dexterity)：敏捷 100\n```\n**請點擊下方按鈕，增加或減少屬性點！**\n您目前有 ** 10 ** 屬性點！'
                 )
               ],
               components: row
             })
             .then(async Amsg => {
               let time = 300000
-              let totalAtt = 30
+              let totalAtt = 10
               let emb1 = new MessageEmbed()
                 .setTitle('<:gura:916521356370251796> 《神意》資訊面板')
                 .setColor(16772493)
@@ -149,15 +129,13 @@ module.exports = {
                   // 重置
                   if (result === 'new') {
                     ATK = 10
-                    DEF = 1
-                    HP = 100
+                    DEF = 10
                     INT = 100
-                    MP = 100
                     DEX = 100
-                    totalAtt = 30
+                    totalAtt = 10
                   } // 完成
                   else if (result) {
-                    await Amsg.delete()
+                    await Amsg.delete().catch(err => console.log(err))
                     await i.channel.send({
                       embeds: [
                         bot.say.msgInfo(
@@ -169,26 +147,14 @@ module.exports = {
                     let data = {}
                     data['ATK'] = ATK
                     data['DEF'] = DEF
-                    data['HP'] = HP
                     data['INT'] = INT
-                    data['MP'] = MP
                     data['DEX'] = DEX
-                    data['TotalHP'] = 100
-                    data['TotalMP'] = 100
                     new Users({
                       _id: message.author.id,
                       區域: '初始之地——新手鎮',
                       種族: '人族',
                       技能: ['數學者'],
                       屬性: data,
-                      升等增加之屬性: {
-                        ATK: 3,
-                        DEF: 3,
-                        HP: 5,
-                        INT: 3,
-                        MP: 6,
-                        DEX: 2
-                      },
                       創建於: Date.now()
                     }).save()
                   } else if (val.includes('ATK+')) {
@@ -201,19 +167,9 @@ module.exports = {
                       DEF += 1
                       totalAtt -= 1
                     }
-                  } else if (val.includes('HP+')) {
-                    if (totalAtt != 0) {
-                      HP += 1
-                      totalAtt -= 1
-                    }
                   } else if (val.includes('INT+')) {
                     if (totalAtt != 0) {
                       INT += 1
-                      totalAtt -= 1
-                    }
-                  } else if (val.includes('MP+')) {
-                    if (totalAtt != 0) {
-                      MP += 1
                       totalAtt -= 1
                     }
                   } else if (val.includes('DEX+')) {
@@ -231,19 +187,9 @@ module.exports = {
                       DEF -= 1
                       totalAtt += 1
                     }
-                  } else if (val.includes('HP-')) {
-                    if (HP > 100) {
-                      HP -= 1
-                      totalAtt += 1
-                    }
                   } else if (val.includes('INT-')) {
                     if (INT > 100) {
                       INT -= 1
-                      totalAtt += 1
-                    }
-                  } else if (val.includes('MP-')) {
-                    if (MP > 100) {
-                      MP -= 1
                       totalAtt += 1
                     }
                   } else if (val.includes('DEX-')) {
@@ -254,7 +200,7 @@ module.exports = {
                   }
 
                   emb1.setDescription(
-                    `\`\`\`markdown\n# 您現在是第 1 次轉生，您目前是<人族>！\n\n- 您獲得了神的恩賜——\n  1. 稀有技能「數學者」\n  2. 屬性點數  30  點\n\`\`\`\n\`\`\`md\n#屬性面板\n- ATK(Attack)：物理攻擊力 ${ATK}\n- DEF(Defense)：防禦力 ${DEF}\n- HP(Health Point)：血量 ${HP}\n- INT(Intelligence)：智力 ${INT}\n- MP(Magic point)：魔力值 ${MP}\n- DEX(Dexterity)：敏捷 ${DEX}\n\`\`\`\n**請點擊下方按鈕，增加或減少屬性點！**\n您目前有 ** ${totalAtt} ** 屬性點！`
+                    `\`\`\`markdown\n# 您現在是第 1 次轉生，您目前是<人族>！\n\n- 您獲得了神的恩賜——\n  1. 稀有技能「數學者」\n  2. 屬性點數  10  點\n\`\`\`\n\`\`\`md\n#屬性面板\n- ATK(Attack)：物理攻擊力 ${ATK}\n- DEF(Defense)：防禦力 ${DEF}\n- INT(Intelligence)：智力 ${INT}\n- DEX(Dexterity)：敏捷 ${DEX}\n\`\`\`\n**請點擊下方按鈕，增加或減少屬性點！**\n您目前有 ** ${totalAtt} ** 屬性點！`
                   )
                   try {
                     await Amsg.edit({
@@ -291,7 +237,7 @@ module.exports = {
       })
 
       collector.on('end', async collected => {
-        if (!deleted) (await msg).delete()
+        if (!deleted) (await msg).delete().catch(err => console.log(err))
       })
     } else {
       message.channel.send({
