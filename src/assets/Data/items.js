@@ -1,3 +1,4 @@
+const Users = require('../../models/mongoDB/Users')
 module.exports = [
   {
     name: '銅',
@@ -31,5 +32,20 @@ module.exports = [
     price: 100000,
     keep: false,
     run: async (bot, message, args) => {}
+  },
+  {
+    name: '小型紅藥水',
+    description: '飲用可回復100滴血量。',
+    canUse: true,
+    canBuy: true,
+    displayOnShop: false,
+    sellAmount: 20,
+    price: 100,
+    keep: false,
+    run: async (bot, message, args) => {
+      const user = await Users.findOne({ _id: message.author.id })
+      const a = user.THP - user.HP // 125 - 125 or 125 - 1 or 125 -0
+      
+    }
   }
 ]
