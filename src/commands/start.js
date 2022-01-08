@@ -1,5 +1,5 @@
-const { MessageEmbed, MessageButton, MessageActionRow } = require('discord.js')
-const Users = require('../models/mongoDB/Users.js')
+const { MessageEmbed, MessageButton, MessageActionRow } = require('discord.js'),
+  Users = require('../models/mongoDB/Users.js')
 
 module.exports = {
   name: 'start',
@@ -24,68 +24,67 @@ module.exports = {
     })
     if (!User) {
       const msg = message.reply({
-        content:
-          '**《神意》**\n是一款帶有中世紀色彩的劍與魔法世界。\n諸君將藉由發送訊息以操縱世界中的角色，並尋覓得《神意》。\n\n世界中的角色一旦徹底湮滅，您便可「受肉」重生至下一角色。\n每「受肉」一次，靈魂便會得到昇華，同時獲得「稀有技能」。\n「稀有技能」將使角色變得更加強大，並得以更加迅速地尋覓得《神意》。',
-        ephemeral: false,
-        components: [
-          new MessageActionRow().addComponents(
-            new MessageButton()
-              .setCustomId('startAgree')
-              .setLabel('同意')
-              .setStyle('SUCCESS'),
+          content:
+            '**《神意》**\n是一款帶有中世紀色彩的劍與魔法世界。\n諸君將藉由發送訊息以操縱世界中的角色，並尋覓得《神意》。\n\n世界中的角色一旦徹底湮滅，您便可「受肉」重生至下一角色。\n每「受肉」一次，靈魂便會得到昇華，同時獲得「稀有技能」。\n「稀有技能」將使角色變得更加強大，並得以更加迅速地尋覓得《神意》。',
+          ephemeral: false,
+          components: [
+            new MessageActionRow().addComponents(
+              new MessageButton()
+                .setCustomId('startAgree')
+                .setLabel('同意')
+                .setStyle('SUCCESS'),
 
-            new MessageButton()
-              .setCustomId('startRefuse')
-              .setLabel('拒絕')
-              .setStyle('DANGER')
-              .setDisabled(true)
-          )
-        ],
-        embeds: [
-          new MessageEmbed()
-            .setTitle('事前須知')
-            .setDescription(
-              '您第一次「受肉」的種族一定是「人族」，並得到神的恩賜——\n稀有技能·「數學者」。\n```md\n# 「數學者」將使血量、魔力等具現數字化，並將事件執行的成功機率計算後轉換為實質數字呈現於您眼前。```\n**《神意》**世界中，您將於觸發特定事件後，獲得技能；\n您無須詠唱、結構術式，即可消耗**MP**施法。\n您在重複使用該技能後，其便利性會隨**熟練度**增加而增加。\n\n您可於完成**「神使任務」**後獲得報酬：\n技能、世界權能、屬性加成……。\n\n**「屬性加成」**為神使特權，您將於初次「受肉」時獲得屬性點、每次升級時獲得屬性加成。「屬性」能使您的攻擊力、防禦力、敏捷……得到提昇。'
+              new MessageButton()
+                .setCustomId('startRefuse')
+                .setLabel('拒絕')
+                .setStyle('DANGER')
+                .setDisabled(true)
             )
-            .setColor('#58FFB9'),
-          new MessageEmbed()
-            .setTitle('請確認您是否同意進去《神意》世界')
-            .setDescription('點擊下方按鈕，以回覆您的選擇。')
-            .setColor('#58FFB9')
-        ]
-      })
-      const filter = i =>
-        i.customId === 'startAgree' && i.user.id === message.author.id
-
-      const collector = message.channel.createMessageComponentCollector({
-        filter,
-        time: 15000
-      })
+          ],
+          embeds: [
+            new MessageEmbed()
+              .setTitle('事前須知')
+              .setDescription(
+                '您第一次「受肉」的種族一定是「人族」，並得到神的恩賜——\n稀有技能·「數學者」。\n```md\n# 「數學者」將使血量、魔力等具現數字化，並將事件執行的成功機率計算後轉換為實質數字呈現於您眼前。```\n**《神意》**世界中，您將於觸發特定事件後，獲得技能；\n您無須詠唱、結構術式，即可消耗**MP**施法。\n您在重複使用該技能後，其便利性會隨**熟練度**增加而增加。\n\n您可於完成**「神使任務」**後獲得報酬：\n技能、世界權能、屬性加成……。\n\n**「屬性加成」**為神使特權，您將於初次「受肉」時獲得屬性點、每次升級時獲得屬性加成。「屬性」能使您的攻擊力、防禦力、敏捷……得到提昇。'
+              )
+              .setColor('#58FFB9'),
+            new MessageEmbed()
+              .setTitle('請確認您是否同意進去《神意》世界')
+              .setDescription('點擊下方按鈕，以回覆您的選擇。')
+              .setColor('#58FFB9')
+          ]
+        }),
+        filter = i =>
+          i.customId === 'startAgree' && i.user.id === message.author.id,
+        collector = message.channel.createMessageComponentCollector({
+          filter,
+          time: 15000
+        })
       let deleted = false
       collector.on('collect', async i => {
         if (i.customId === 'startAgree') {
           ;(await msg).delete().catch(err => console.log(err))
           deleted = true
 
-          let button = new Array([], [])
-          let row = []
-          let text = [
-            'ATK+',
-            'DEF+',
-            'INT+',
-            'DEX+',
-            '重置',
-            'ATK-',
-            'DEF-',
-            'INT-',
-            'DEX-',
-            '完成'
-          ]
-          let ATK = 10
-          let DEF = 10
-          let INT = 100
-          let DEX = 100
-          let current = 0
+          let button = new Array([], []),
+            row = [],
+            text = [
+              'ATK+',
+              'DEF+',
+              'INT+',
+              'DEX+',
+              '重置',
+              'ATK-',
+              'DEF-',
+              'INT-',
+              'DEX-',
+              '完成'
+            ],
+            ATK = 10,
+            DEF = 10,
+            INT = 100,
+            DEX = 100,
+            current = 0
           for (let i = 0; i < text.length; i++) {
             if (button[current].length === 5) current++
             button[current].push(createButton(text[i]))
@@ -105,13 +104,13 @@ module.exports = {
               components: row
             })
             .then(async Amsg => {
-              let time = 300000
-              let totalAtt = 10
-              let emb1 = new MessageEmbed()
-                .setTitle('<:gura:916521356370251796> 《神意》資訊面板')
-                .setColor(16772493)
-                .setTimestamp()
-                .setImage('https://imgur.com/ARAAYlh.gif')
+              let time = 300000,
+                totalAtt = 10,
+                emb1 = new MessageEmbed()
+                  .setTitle('<:gura:916521356370251796> 《神意》資訊面板')
+                  .setColor(16772493)
+                  .setTimestamp()
+                  .setImage('https://imgur.com/ARAAYlh.gif')
 
               function createCollector (val, result = false) {
                 const filter = button =>
