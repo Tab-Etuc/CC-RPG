@@ -1,7 +1,6 @@
-const { MessageButton, MessageActionRow } = require('discord.js')
-const Users = require('../models/mongoDB/Users.js')
-
-const Bar = require('../models/Bar')
+const { MessageButton, MessageActionRow } = require('discord.js'),
+  Users = require('../models/mongoDB/Users.js'),
+  Bar = require('../models/Bar')
 module.exports = {
   name: 'profile',
   description: '查看冒險者卡片',
@@ -35,8 +34,8 @@ module.exports = {
         )
       }
     }
-    const HPBar = Bar(User.HP, User.THP, 'HP')
-    const MPBar = Bar(User.MP, User.TMP, 'MP')
+    const HPBar = Bar(User.HP, User.THP, 'HP'),
+      MPBar = Bar(User.MP, User.TMP, 'MP')
 
     let Equipments = '```md\n'
 
@@ -47,74 +46,73 @@ module.exports = {
       : (Equipments += '無')
 
     const msg = message.reply({
-      embeds: [
-        bot.say
-          .msgInfo(
-            `\`\`\`md\n# 稀有技能 -「數學者」權能\n\`\`\`\n**血量：**\n${HPBar.Bar} \`${User.HP}/${User.THP}\` \`${HPBar.percentageText}\`\n**魔力值：**\n${MPBar.Bar} \`${User.MP}/${User.TMP}\` \`${MPBar.percentageText}\`\n\`\`\`md\n# 屬性狀態\n- [ATK] 物理攻擊力> ${User.屬性['ATK']}\n- [DEF] 防禦力> ${User.屬性['DEF']}\n- [INT] 智力> ${User.屬性['INT']}\n- [DEX] 敏捷> ${User.屬性['DEX']}\n\`\`\``
+        embeds: [
+          bot.say
+            .msgInfo(
+              `\`\`\`md\n# 稀有技能 -「數學者」權能\n\`\`\`\n**血量：**\n${HPBar.Bar} \`${User.HP}/${User.THP}\` \`${HPBar.percentageText}\`\n**魔力值：**\n${MPBar.Bar} \`${User.MP}/${User.TMP}\` \`${MPBar.percentageText}\`\n\`\`\`md\n# 屬性狀態\n- [ATK] 物理攻擊力> ${User.屬性['ATK']}\n- [DEF] 防禦力> ${User.屬性['DEF']}\n- [INT] 智力> ${User.屬性['INT']}\n- [DEX] 敏捷> ${User.屬性['DEX']}\n\`\`\``
+            )
+            .setThumbnail(user.displayAvatarURL())
+            .setFields([
+              {
+                name: '[等級]',
+                value: User.等級.toString(),
+                inline: true
+              },
+              {
+                name: '[評級]',
+                value: User.評級,
+                inline: true
+              },
+              {
+                name: '[種族]',
+                value: User.種族,
+                inline: true
+              },
+              {
+                name: '[經驗值]',
+                value:
+                  User.經驗值.toString() + '/' + User.升等所需經驗值.toString(),
+                inline: true
+              },
+              {
+                name: '[金錢]',
+                value: User.金錢.toString(),
+                inline: true
+              },
+              {
+                name: '[業力]',
+                value: User.業力.toString(),
+                inline: true
+              },
+              {
+                name: '[裝備]',
+                value: Equipments + '```'
+              }
+            ])
+        ],
+        ephemeral: false,
+        components: [
+          new MessageActionRow().addComponents(
+            new MessageButton()
+              .setCustomId('profileQuest' + message.id)
+              .setLabel('任務')
+              .setStyle('PRIMARY'),
+            new MessageButton()
+              .setCustomId('profileAppraisal' + message.id)
+              .setLabel('考核')
+              .setStyle('DANGER')
+              .setDisabled(true)
           )
-          .setThumbnail(user.displayAvatarURL())
-          .setFields([
-            {
-              name: '[等級]',
-              value: User.等級.toString(),
-              inline: true
-            },
-            {
-              name: '[評級]',
-              value: User.評級,
-              inline: true
-            },
-            {
-              name: '[種族]',
-              value: User.種族,
-              inline: true
-            },
-            {
-              name: '[經驗值]',
-              value:
-                User.經驗值.toString() + '/' + User.升等所需經驗值.toString(),
-              inline: true
-            },
-            {
-              name: '[金錢]',
-              value: User.金錢.toString(),
-              inline: true
-            },
-            {
-              name: '[業力]',
-              value: User.業力.toString(),
-              inline: true
-            },
-            {
-              name: '[裝備]',
-              value: Equipments + '```'
-            }
-          ])
-      ],
-      ephemeral: false,
-      components: [
-        new MessageActionRow().addComponents(
-          new MessageButton()
-            .setCustomId('profileQuest' + message.id)
-            .setLabel('任務')
-            .setStyle('PRIMARY'),
-          new MessageButton()
-            .setCustomId('profileAppraisal' + message.id)
-            .setLabel('考核')
-            .setStyle('DANGER')
-            .setDisabled(true)
-        )
-      ]
-    })
-    const filter = i =>
-      (i.customId === 'profileQuest' + message.id ||
-        i.customId === 'profileAppraisal' + message.id) &&
-      i.user.id === message.author.id
-
-    const collector = message.channel.createMessageComponentCollector({
-      filter,
-      time: 60000
-    })
+        ]
+      }),
+      filter = i =>
+        (i.customId === 'profileQuest' + message.id ||
+          i.customId === 'profileAppraisal' + message.id) &&
+        i.user.id === message.author.id,
+      collector = message.channel.createMessageComponentCollector({
+        filter,
+        time: 60000
+      })
     let a = true
     collector.on('collect', async i => {
       switch (i.customId) {
