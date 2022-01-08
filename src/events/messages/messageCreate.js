@@ -1,5 +1,5 @@
-const Guilds = require('../../models/mongoDB/Guilds.js')
-const CheckLevelUp = require('../../models/CheckLevelUp.js')
+const Guilds = require('../../models/mongoDB/Guilds.js'),
+  CheckLevelUp = require('../../models/CheckLevelUp.js')
 
 module.exports = {
   name: 'messageCreate',
@@ -12,7 +12,6 @@ module.exports = {
     } catch {}
   }
 }
-
 async function RunCommand (bot, message) {
   let prefix = bot.config.DefaultPrefix
   let GuildData = await Guilds.findOne({
@@ -32,16 +31,15 @@ async function RunCommand (bot, message) {
     : prefix
 
   const args = message.content
-    .slice(prefix.length)
-    .trim()
-    .split(/ +/g)
-  //Making the command lowerCase because our file name will be in lowerCase
-  const command = args.shift().toLowerCase()
-
-  //Searching a command
-  const cmd =
-    bot.commands.get(command) ||
-    bot.commands.find(x => x.aliases && x.aliases.includes(command))
+      .slice(prefix.length)
+      .trim()
+      .split(/ +/g),
+    //Making the command lowerCase because our file name will be in lowerCase
+    command = args.shift().toLowerCase(),
+    //Searching a command
+    cmd =
+      bot.commands.get(command) ||
+      bot.commands.find(x => x.aliases && x.aliases.includes(command))
   if (cmd) {
     if (message.content.indexOf(prefix) !== 0) return
 
