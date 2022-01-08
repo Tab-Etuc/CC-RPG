@@ -1,4 +1,3 @@
-const { MessageEmbed, MessageButton, MessageActionRow } = require('discord.js')
 const fs = require('fs')
 
 module.exports = {
@@ -19,8 +18,9 @@ module.exports = {
    */
 
   run: async (bot, message, args, GuildDB) => {
-    let Fields = []
-    let Field = {}
+    let Fields = [],
+      Field = {}
+
     const commandFiles = fs
       .readdirSync('./src/commands')
       .filter(file => file.endsWith('.js'))
@@ -31,7 +31,6 @@ module.exports = {
       Field.value = `\`${command.description}\``
       Field.inline = true
       Fields.push(Field)
-      console.log(Fields)
       Field = {}
     }
     message.reply({
