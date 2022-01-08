@@ -1,5 +1,5 @@
 const Users = require('./mongoDB/Users.js')
-const Data = require('../assets/Data/ethnicity.json')
+, Data = require('../assets/Data/ethnicity.json')
 
 module.exports = async (bot, message) => {
   const user = await Users.findOne({ _id: message.author.id })
