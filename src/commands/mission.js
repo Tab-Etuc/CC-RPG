@@ -1,7 +1,3 @@
-const { MessageButton, MessageActionRow } = require('discord.js')
-const Users = require('../models/mongoDB/Users.js')
-
-const Bar = require('../models/Bar')
 module.exports = {
   name: 'mission',
   description: '神使任務',
