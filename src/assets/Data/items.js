@@ -43,9 +43,16 @@ module.exports = [
     price: 100,
     keep: false,
     run: async (bot, message, args) => {
-      const user = await Users.findOne({ _id: message.author.id })
-      const a = user.THP - user.HP // 125 - 125 or 125 - 1 or 125 -0
-      
+      const USER = await Users.findOne({ _id: message.author.id })
+      const volume = USER.THP - USER.HP // (125 - 125 = 0) or (125 - 1 = 124) or (125 -0 = 125)
+
+      //滿血
+      if (volume == 0) {
+        return message.channel.send({
+          embeds: [bot.say.msgError(`\`\`\`md\n# 您已是最佳狀態！\n\`\`\``)]
+        })
+      } else if (volume < 100) {
+      }
     }
   }
 ]
