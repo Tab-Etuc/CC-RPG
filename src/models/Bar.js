@@ -4,10 +4,11 @@
  * @param {Number} maxValue - The max value of the bar
  * @return {{Bar: string, percentageText: string}} - The bar
  */
+// 功力不足，待補
 module.exports = (value, maxValue, type) => {
-  const a1X = '<:e:919425301061173259>'
-  const aX = '<:e:919425301203800114>'
-  const a2X = '<:e_:919425301392523295>'
+  const a1X = '<:e:919425301061173259>',
+    aX = '<:e:919425301203800114>',
+    a2X = '<:e_:919425301392523295>'
   let a1O
   let aO
   let a2O
@@ -35,9 +36,9 @@ module.exports = (value, maxValue, type) => {
     emptyProgress -= 1
   }
   emptyProgress == 0 ? (a2 = a2O) : (a2 = a2X)
-  const progressText = aO.repeat(progress)
-  const emptyProgressText = aX.repeat(emptyProgress)
-  const percentageText = Math.round(percentage * 100) + '%'
-  const Bar = a1 + progressText + emptyProgressText + a2
+  const progressText = aO.repeat(progress),
+    emptyProgressText = aX.repeat(emptyProgress),
+    percentageText = Math.round(percentage * 100) + '%',
+    Bar = a1 + progressText + emptyProgressText + a2
   return { Bar, percentageText }
 }
