@@ -1,5 +1,5 @@
-const { Client, Collection } = require('discord.js')
-const prettyMilliseconds = require('pretty-ms')
+const { Client, Collection } = require('discord.js'),
+  prettyMilliseconds = require('pretty-ms')
 
 require('../models/format')
 require('dotenv').config()
