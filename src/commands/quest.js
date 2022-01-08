@@ -1,11 +1,11 @@
-const { MessageButton, MessageActionRow } = require('discord.js')
-const Users = require('../models/mongoDB/Users.js')
-const Bar = require('../models/Bar')
-const { getRandom, getBetweenRandom } = require('../models/Math')
-const wait = require('util').promisify(setTimeout)
-const Data = require('../assets/Data/quest.js')
-const CheckLevelUp = require('../models/CheckLevelUp')
-const Items = require('../assets/Data/items')
+const { MessageButton, MessageActionRow } = require('discord.js'),
+  Users = require('../models/mongoDB/Users.js'),
+  Bar = require('../models/Bar'),
+  { getRandom, getBetweenRandom } = require('../models/Math'),
+  wait = require('util').promisify(setTimeout),
+  Data = require('../assets/Data/quest.js'),
+  CheckLevelUp = require('../models/CheckLevelUp'),
+  Items = require('../assets/Data/items')
 module.exports = {
   name: 'quest',
   description: '接取任務',
@@ -34,58 +34,57 @@ module.exports = {
     // 初始事件
     if (user.事件紀錄.完成任務數.總共 == 0) {
       const msg = message.channel.send({
-        embeds: [
-          bot.say
-            .msgInfo(`\`\`\`md\n# ☬初始任務☬\n\`\`\``)
-            .setFields([
-              {
-                name: '✅ 目標',
-                value: '前往採集一株「伊蒂絲藥草」\n並上繳至冒險者公會'
-              },
-              {
-                name: '🎁 報酬',
-                value: '新手特惠——\n鐵鎧甲x1, 鐵大劍x1, 背包x1',
-                inline: true
-              },
-              {
-                name: '🕐 耗時',
-                value: '約 10 ~ 20 秒'
-              },
-              {
-                name: '是否接取此任務？',
-                value: '請使用下方按鈕回復。'
-              }
-            ])
-            .setThumbnail(
-              'https://cdn.discordapp.com/attachments/919503944764502057/919504785391120414/unknown.png'
+          embeds: [
+            bot.say
+              .msgInfo(`\`\`\`md\n# ☬初始任務☬\n\`\`\``)
+              .setFields([
+                {
+                  name: '✅ 目標',
+                  value: '前往採集一株「伊蒂絲藥草」\n並上繳至冒險者公會'
+                },
+                {
+                  name: '🎁 報酬',
+                  value: '新手特惠——\n鐵鎧甲x1, 鐵大劍x1, 背包x1',
+                  inline: true
+                },
+                {
+                  name: '🕐 耗時',
+                  value: '約 10 ~ 20 秒'
+                },
+                {
+                  name: '是否接取此任務？',
+                  value: '請使用下方按鈕回復。'
+                }
+              ])
+              .setThumbnail(
+                'https://cdn.discordapp.com/attachments/919503944764502057/919504785391120414/unknown.png'
+              )
+          ],
+          components: [
+            new MessageActionRow().addComponents(
+              new MessageButton()
+                .setCustomId('questFirstAgree' + message.id)
+                .setLabel('同意')
+                .setStyle('SUCCESS'),
+              new MessageButton()
+                .setCustomId('questFirstRejection' + message.id)
+                .setLabel('取消')
+                .setStyle('DANGER')
             )
-        ],
-        components: [
-          new MessageActionRow().addComponents(
-            new MessageButton()
-              .setCustomId('questFirstAgree' + message.id)
-              .setLabel('同意')
-              .setStyle('SUCCESS'),
-            new MessageButton()
-              .setCustomId('questFirstRejection' + message.id)
-              .setLabel('取消')
-              .setStyle('DANGER')
-          )
-        ]
-      })
-      const filter = i =>
-        (i.customId === 'questFirstAgree' + message.id ||
-          i.customId === 'questFirstRejection' + message.id) &&
-        i.user.id === message.author.id
-
-      const collector = message.channel.createMessageComponentCollector({
-        filter,
-        time: 60000
-      })
+          ]
+        }),
+        filter = i =>
+          (i.customId === 'questFirstAgree' + message.id ||
+            i.customId === 'questFirstRejection' + message.id) &&
+          i.user.id === message.author.id,
+        collector = message.channel.createMessageComponentCollector({
+          filter,
+          time: 60000
+        })
 
       collector.on('collect', async i => {
-        const HPBar = Bar(user.HP, user.THP, 'HP')
-        const MPBar = Bar(user.MP, user.TMP, 'MP')
+        const HPBar = Bar(user.HP, user.THP, 'HP'),
+          MPBar = Bar(user.MP, user.TMP, 'MP')
         switch (i.customId) {
           case 'questFirstAgree' + message.id: // 同意
             let Chance = getRandom(9) // 隨機亂數1~10
@@ -102,16 +101,16 @@ module.exports = {
               break
             }
 
-            const Duration = getBetweenRandom(10, 20)
-            const text = [
-              '# 採集任務執行中……',
-              '# 採集任務執行中……\n- 你正在前往目的地的路上。',
-              '# 採集任務執行中……\n- 你正在前往目的地的路上。\n- 你發現了一頭野豬，自知不敵，\n便以迅雷不及掩耳之姿逃跑了。\n  1. 敏捷+5',
-              '# 採集任務執行中……\n- 你正在前往目的地的路上。\n- 你發現了一頭野豬，自知不敵，\n便以迅雷不及掩耳之姿逃跑了。\n  1. 敏捷+5\n  2. 經驗值+100',
-              '# 採集任務執行中……\n- 你正在前往目的地的路上。\n- 你發現了一頭野豬，自知不敵，\n便以迅雷不及掩耳之姿逃跑了。\n  1. 敏捷+5\n  2. 經驗值+100\n- 你找到了一株散發著異樣氣息的草。',
-              '# 採集任務執行中……\n- 你正在前往目的地的路上。\n- 你發現了一頭野豬，自知不敵，\n便以迅雷不及掩耳之姿逃跑了。\n  1. 敏捷+5\n  2. 經驗值+100\n- 你找到了一株散發著異樣氣息的草。\n- 你比對著冒險者公會的圖鑑，發現正是「伊蒂絲藥草」。',
-              '# 採集任務執行中……\n- 你正在前往目的地的路上。\n- 你發現了一頭野豬，自知不敵，\n便以迅雷不及掩耳之姿逃跑了。\n  1. 敏捷+5\n  2. 經驗值+100\n- 你找到了一株散發著異樣氣息的草。\n- 你比對著冒險者公會的圖鑑，發現正是「伊蒂絲藥草」。\n- 你開始採集「伊蒂絲藥草」。'
-            ]
+            const Duration = getBetweenRandom(10, 20),
+              text = [
+                '# 採集任務執行中……',
+                '# 採集任務執行中……\n- 你正在前往目的地的路上。',
+                '# 採集任務執行中……\n- 你正在前往目的地的路上。\n- 你發現了一頭野豬，自知不敵，\n便以迅雷不及掩耳之姿逃跑了。\n  1. 敏捷+5',
+                '# 採集任務執行中……\n- 你正在前往目的地的路上。\n- 你發現了一頭野豬，自知不敵，\n便以迅雷不及掩耳之姿逃跑了。\n  1. 敏捷+5\n  2. 經驗值+100',
+                '# 採集任務執行中……\n- 你正在前往目的地的路上。\n- 你發現了一頭野豬，自知不敵，\n便以迅雷不及掩耳之姿逃跑了。\n  1. 敏捷+5\n  2. 經驗值+100\n- 你找到了一株散發著異樣氣息的草。',
+                '# 採集任務執行中……\n- 你正在前往目的地的路上。\n- 你發現了一頭野豬，自知不敵，\n便以迅雷不及掩耳之姿逃跑了。\n  1. 敏捷+5\n  2. 經驗值+100\n- 你找到了一株散發著異樣氣息的草。\n- 你比對著冒險者公會的圖鑑，發現正是「伊蒂絲藥草」。',
+                '# 採集任務執行中……\n- 你正在前往目的地的路上。\n- 你發現了一頭野豬，自知不敵，\n便以迅雷不及掩耳之姿逃跑了。\n  1. 敏捷+5\n  2. 經驗值+100\n- 你找到了一株散發著異樣氣息的草。\n- 你比對著冒險者公會的圖鑑，發現正是「伊蒂絲藥草」。\n- 你開始採集「伊蒂絲藥草」。'
+              ]
             for (let i = 1; i < Duration; i++) {
               ;(await msg).edit({
                 embeds: [
@@ -201,65 +200,62 @@ module.exports = {
         }
       })
     } else {
-      const Fields = []
-      const Flength = Object.keys(Data[user.評級][0].訊息).length
-      const 短暫任務 = Data[user.評級][0].訊息[getBetweenRandom(1, Flength)]
-
-      const Slength = Object.keys(Data[user.評級][1].訊息).length
-      const 中等任務 = Data[user.評級][1].訊息[getBetweenRandom(1, Slength)]
-
-      const Tlength = Object.keys(Data[user.評級][2].訊息).length
-      const 持久任務 = Data[user.評級][2].訊息[getBetweenRandom(1, Tlength)]
+      const Fields = [],
+        Flength = Object.keys(Data[user.評級][0].訊息).length,
+        短暫任務 = Data[user.評級][0].訊息[getBetweenRandom(1, Flength)],
+        Slength = Object.keys(Data[user.評級][1].訊息).length,
+        中等任務 = Data[user.評級][1].訊息[getBetweenRandom(1, Slength)],
+        Tlength = Object.keys(Data[user.評級][2].訊息).length,
+        持久任務 = Data[user.評級][2].訊息[getBetweenRandom(1, Tlength)]
 
       Fields.push(短暫任務.Fields)
       Fields.push(中等任務.Fields)
       Fields.push(持久任務.Fields)
 
       const msg = message.channel.send({
-        embeds: [
-          bot.say
-            .msgInfo(
-              `\`\`\`md\n# 請選擇欲執行的任務\n\n* 註：獲得之經驗值會隨著耗時增加而增加\n\`\`\``
+          embeds: [
+            bot.say
+              .msgInfo(
+                `\`\`\`md\n# 請選擇欲執行的任務\n\n* 註：獲得之經驗值會隨著耗時增加而增加\n\`\`\``
+              )
+              .setFields(Fields)
+          ],
+          components: [
+            new MessageActionRow().addComponents(
+              new MessageButton()
+                .setCustomId('questFirst' + message.id)
+                .setLabel(短暫任務.Fields.name)
+                .setStyle('SUCCESS'),
+              new MessageButton()
+                .setCustomId('questSecond' + message.id)
+                .setLabel(中等任務.Fields.name)
+                .setStyle('SUCCESS'),
+              new MessageButton()
+                .setCustomId('questThird' + message.id)
+                .setLabel(持久任務.Fields.name)
+                .setStyle('SUCCESS'),
+              new MessageButton()
+                .setCustomId('questRejection' + message.id)
+                .setLabel('取消')
+                .setStyle('DANGER')
             )
-            .setFields(Fields)
-        ],
-        components: [
-          new MessageActionRow().addComponents(
-            new MessageButton()
-              .setCustomId('questFirst' + message.id)
-              .setLabel(短暫任務.Fields.name)
-              .setStyle('SUCCESS'),
-            new MessageButton()
-              .setCustomId('questSecond' + message.id)
-              .setLabel(中等任務.Fields.name)
-              .setStyle('SUCCESS'),
-            new MessageButton()
-              .setCustomId('questThird' + message.id)
-              .setLabel(持久任務.Fields.name)
-              .setStyle('SUCCESS'),
-            new MessageButton()
-              .setCustomId('questRejection' + message.id)
-              .setLabel('取消')
-              .setStyle('DANGER')
-          )
-        ]
-      })
-      const filter = i =>
-        (i.customId === 'questFirst' + message.id ||
-          i.customId === 'questSecond' + message.id ||
-          i.customId === 'questThird' + message.id ||
-          i.customId === 'questRejection' + message.id) &&
-        i.user.id === message.author.id
-
-      const collector = message.channel.createMessageComponentCollector({
-        filter,
-        time: 60000
-      })
+          ]
+        }),
+        filter = i =>
+          (i.customId === 'questFirst' + message.id ||
+            i.customId === 'questSecond' + message.id ||
+            i.customId === 'questThird' + message.id ||
+            i.customId === 'questRejection' + message.id) &&
+          i.user.id === message.author.id,
+        collector = message.channel.createMessageComponentCollector({
+          filter,
+          time: 60000
+        })
 
       collector.on('collect', async i => {
-        const HPBar = Bar(user.HP, user.THP, 'HP')
-        const MPBar = Bar(user.MP, user.TMP, 'MP')
-        const item = Items.find(x => x.name === '銅')
+        const HPBar = Bar(user.HP, user.THP, 'HP'),
+          MPBar = Bar(user.MP, user.TMP, 'MP'),
+          item = Items.find(x => x.name === '銅')
 
         switch (i.customId) {
           case 'questFirst' + message.id:
@@ -281,8 +277,8 @@ module.exports = {
               }
             }
 
-            const Duration = getBetweenRandom(10, 20)
-            const text = 短暫任務.Text
+            const Duration = getBetweenRandom(10, 20),
+              text = 短暫任務.Text
             for (let i = 1; i < Duration; i++) {
               ;(await msg).edit({
                 embeds: [
@@ -340,9 +336,8 @@ module.exports = {
               components: []
             })
 
-            
-            let founditem = user.背包.find(x => x.name === item.name)
-            let array = []
+            let founditem = user.背包.find(x => x.name === item.name),
+              array = []
             array = user.背包.filter(x => x.name !== item.name)
             if (founditem) {
               array.push({
@@ -387,8 +382,8 @@ module.exports = {
               }
             }
 
-            const questSecondDuration = getBetweenRandom(10, 20)
-            const questSecondText = 中等任務.Text
+            const questSecondDuration = getBetweenRandom(10, 20),
+              questSecondText = 中等任務.Text
             for (let i = 1; i < questSecondDuration; i++) {
               ;(await msg).edit({
                 embeds: [
@@ -398,7 +393,8 @@ module.exports = {
                         HPBar.percentageText
                       }\`\n**魔力值：**\n${MPBar.Bar} \`${
                         MPBar.percentageText
-                      }\`\n\`\`\`md\n${questSecondText[i - 1] || questSecondText[0]}\`\`\``
+                      }\`\n\`\`\`md\n${questSecondText[i - 1] ||
+                        questSecondText[0]}\`\`\``
                     )
                     .setThumbnail(中等任務.Thumbnail)
                     .setFields([
@@ -416,7 +412,9 @@ module.exports = {
               })
               await wait(1000)
             }
-            let questSecondExpFormulas = Math.floor(questSecondDuration ** 1.1 * user.等級 ** 1.4)
+            let questSecondExpFormulas = Math.floor(
+              questSecondDuration ** 1.1 * user.等級 ** 1.4
+            )
             const questSecondExpToAdd = getBetweenRandom(
               Math.floor(questSecondExpFormulas * 0.8),
               questSecondExpFormulas
@@ -446,8 +444,10 @@ module.exports = {
               components: []
             })
 
-            let questSecondFoundItem = user.背包.find(x => x.name === item.name)
-            let questSecondBag = []
+            let questSecondFoundItem = user.背包.find(
+                x => x.name === item.name
+              ),
+              questSecondBag = []
             questSecondBag = user.背包.filter(x => x.name !== item.name)
             if (questSecondFoundItem) {
               questSecondBag.push({
@@ -492,8 +492,8 @@ module.exports = {
               }
             }
 
-            const questThirdDuration = getBetweenRandom(10, 20)
-            const questThirdText = 持久任務.Text
+            const questThirdDuration = getBetweenRandom(10, 20),
+              questThirdText = 持久任務.Text
             for (let i = 1; i < questThirdDuration; i++) {
               ;(await msg).edit({
                 embeds: [
@@ -503,7 +503,8 @@ module.exports = {
                         HPBar.percentageText
                       }\`\n**魔力值：**\n${MPBar.Bar} \`${
                         MPBar.percentageText
-                      }\`\n\`\`\`md\n${questThirdText[i - 1] || questThirdText[0]}\`\`\``
+                      }\`\n\`\`\`md\n${questThirdText[i - 1] ||
+                        questThirdText[0]}\`\`\``
                     )
                     .setThumbnail(持久任務.Thumbnail)
                     .setFields([
@@ -521,7 +522,9 @@ module.exports = {
               })
               await wait(1000)
             }
-            let questThirdExpFormulas = Math.floor(questThirdDuration ** 1.1 * user.等級 ** 1.4)
+            let questThirdExpFormulas = Math.floor(
+              questThirdDuration ** 1.1 * user.等級 ** 1.4
+            )
             const questThirdExpToAdd = getBetweenRandom(
               Math.floor(questThirdExpFormulas * 0.8),
               questThirdExpFormulas
@@ -551,9 +554,8 @@ module.exports = {
               components: []
             })
 
-
-            let questThirdFoundItem = user.背包.find(x => x.name === item.name)
-            let  questThirdBag = []
+            let questThirdFoundItem = user.背包.find(x => x.name === item.name),
+              questThirdBag = []
             questThirdBag = user.背包.filter(x => x.name !== item.name)
             if (questThirdFoundItem) {
               questThirdBag.push({
@@ -595,14 +597,12 @@ module.exports = {
   }
 }
 function QuestBar (value, maxValue, size) {
-  const percentage = value / maxValue // Calculate the percentage of the bar
-  const progress = Math.round(size * percentage) // Calculate the number of square caracters to fill the progress side.
-  const emptyProgress = size - progress // Calculate the number of dash caracters to fill the empty progress side.
-
-  const progressText = '▇'.repeat(progress) // Repeat is creating a string with progress * caracters in it
-  const emptyProgressText = '—'.repeat(emptyProgress) // Repeat is creating a string with empty progress * caracters in it
-  const percentageText = Math.round(percentage * 100) + '%' // Displaying the percentage of the bar
-
-  const Bar = progressText + emptyProgressText // Creating the bar
+  const percentage = value / maxValue, // Calculate the percentage of the bar
+    progress = Math.round(size * percentage), // Calculate the number of square caracters to fill the progress side.
+    emptyProgress = size - progress, // Calculate the number of dash caracters to fill the empty progress side.
+    progressText = '▇'.repeat(progress), // Repeat is creating a string with progress * caracters in it
+    emptyProgressText = '—'.repeat(emptyProgress), // Repeat is creating a string with empty progress * caracters in it
+    percentageText = Math.round(percentage * 100) + '%', // Displaying the percentage of the bar
+    Bar = progressText + emptyProgressText // Creating the bar
   return { Bar, percentageText }
 }
